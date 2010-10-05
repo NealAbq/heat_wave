@@ -1,0 +1,12 @@
+<RCC>
+    <qresource prefix="/heat_simd" >
+        <file>Icons/play5_48.png</file>
+        <file>Icons/play5_disabled_48.png</file>
+        <file>Icons/play5r_48.png</file>
+        <file>Icons/pause4r_48.png</file>
+        <file>Icons/step4_48.png</file>
+        <file>Icons/pause4_48.png</file>
+        <file>Icons/step4r_48.png</file>
+        <file>Icons/XStar_48_4.png</file>
+    </qresource>
+</RCC>

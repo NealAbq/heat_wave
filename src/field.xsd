@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+<!-- ===============================================================================================
+  This schema describes an XML format for expressing a multi-dimensional array of numerical values.
+  The values are floating-point (double) numbers.
+  The array can be 1D (vector), 2D (matrix), 3D, 4D, etc. There is no limit on the dimensionality.
+  The data can be partially or fully specified, or even over-specified.
+  Applications usually set missing values to zero. When a value in a cell is specified more than once,
+  the last specification is the one used.
+  
+  For the heat_wave program I use this to specify a 2D rectangle of scalar values.
+  For a 2D field of (x,y) vectors specify a 3D array with dimensions (width, height, 2).
+  For a 3D vector field specify a 4D array (width, height, depth, 3).
+
+  There are three ways to approach this problem. Think of image formats:
+
+  Pixmap approach, like PNG or BMP:
+    Express the number at every cell location.
+    You can try to encode and compress the numbers, but you want a lossless format.
+
+  JPEG approach:
+    Selectively give up some resolution in order to achieve much better compression.
+    This works great with most images because tiny color variations are not noticable.
+    Sometimes for scientific or engineering data you want to keep the data as detailed as possible,
+    but sometimes, such as with thermal simulation, noise in the data tends to quickly smooth out and
+    a lossy data format may be perfectly acceptable.
+
+  SVG (vector-graphics) approach:
+    Instead of describing the pixel values themselves, you can record a series of operations that describe
+    and can reproduce the pixels.
+
+  This XML schema straddles the first and third (PNG and SVG) approaches.
+  
+  This can be used to save pixmap images (textures, etc). For a color pixmap specify extents (width, height, 3)
+  in order to store the 3 color components (assuming no alpha channel).
+
+  Additions:
+    Allow different kinds of data types. Integer, boolean, complex, rational (ratio), etc. Color? Vector? Structs?
+    Maybe provide a different way to specify vectors, so you don't specify them as the last dimension of the array.
+    Provide a way to specify real (double, float) info as normalized integers with a universal denominator.
+    
+    Offsets. Instead of forcing 0-based index addressing, allow a corner specification.
+    In this case allow negative index values.
+    
+    Edge conditions. For example, with wave simulations you can pin the edge values, leave them floating, or
+    specify some kind of damping.
+    
+    Cutouts. In case you want to specify a circle or some other shape.
+    
+    Sources and sinks. For thermal simulation.
+    
+    Instancing. Allow values (or operations) to be repeated with a transform.
+
+    Non-uniform grid. Allow a mixure of fine and rough gradiations. All cells do not have to be the same size.
+    
+    Drawing operations. Specify lines, paths, ellipses, gradients, etc.
+-->
+
+<!-- ========================================================================================
+  Top-level container in the instance XML.
+
+  The instance XML looks like this:
+  <field version="1.0">
+    <discrete>
+      <extents> ... </extents>
+      <operations>
+        <fill>
+          <box> ... </box>
+          <values> ... </values>
+        </fill>
+        ...
+      </operations>
+    </discrete>
+  </field>
+-->
+<xs:element name="field">
+  <xs:complexType>
+    <xs:sequence>
+      <xs:element name="discrete" type="discreteType" />
+    </xs:sequence>
+    <xs:attribute name="version" type="xs:string" />
+  </xs:complexType>
+</xs:element>
+
+<!--
+  discreteType
+  <xxx>
+    <extents>
+      <extent>5 5</extent>
+      <extent index=2>3</extent>
+    </extents>
+    <operations>
+      <fill>
+        <box> ... </box>
+        <values> ... </values>
+      </fill>
+      ... more fill operations, or other operations as they are implemented ...
+    </operations>
+  </xxx>
+-->
+<xs:complexType name="discreteType">
+  <xs:sequence>
+    <xs:element name="extents" type="extentType" minOccurs="1" maxOccurs="1" />
+    <xs:element name="operations" type="operationType" minOccurs="1" maxOccurs="1" />
+  </xs:sequence>
+</xs:complexType>
+
+<!--
+  operationType
+  <fill>
+    <box>
+      <point>2 2</point>
+      <extent>2 3</extent>
+    </box>
+    <values> 12.3 332.3 333.2 </values>
+    <values> -1.1  -2.2 -33.3 </values>
+  </fill>
+-->
+<xs:complexType name="operationType">
+  <xs:choice minOccurs="0" maxOccurs="unbounded">
+    <xs:element name="fill" type="fillBoxType" />
+    <!-- add more operations here as needed -->
+  </xs:choice>
+</xs:complexType>
+
+<!-- ============================================================================
+  fillBoxType
+  <xxx>
+    <box>
+      <point>-12 14</point>
+      <point index=2>-17</point>
+      <extent>10 20</extent>
+      <extent index=2>30</extent>
+    </box>
+    <values>
+      12.3 332.3 333.2 22.1
+    </values>
+    <values>-1.1 -2.2 -33.3 4</values>
+  </xxx>
+-->
+<xs:complexType name="fillBoxType">
+  <xs:sequence>
+    <xs:element name="box" type="boxType" minOccurs="0" maxOccurs="1" />
+    <xs:element name="values" type="valueListType" minOccurs="0" maxOccurs="unbounded" />
+  </xs:sequence>
+</xs:complexType>
+
+<!--
+  boxType
+  Should this be called orthoBoxType?
+
+  <xxx>
+    <point>-12 14</point>
+    <point index=2>-17</point>
+    <extent>10 20</extent>
+    <extent index=2>30</extent>
+  </xxx>
+-->
+<xs:complexType name="boxType">
+  <xs:sequence>
+    <xs:element name="point" type="indexAttrIndexListType" minOccurs="0" maxOccurs="unbounded" />
+    <xs:element name="extent" type="indexAttrPosSizeListType" minOccurs="0" maxOccurs="unbounded" />
+  </xs:sequence>
+</xs:complexType>
+
+<!-- ==========================================================================================
+  pointType
+  
+  Point coords are integer and can be negative.
+  You can use the index attribute to partly specify a coord. For example <point index="2">7</point>
+  partly specifies the point (*, *, 7) or in 4D (*, *, 7, *).
+  
+  You can specify a point a bit at a time. This sequence specifies the point (55, 45, 7, 8, *, 9)
+    <point></point>
+    <point>5 6</point>
+    <point index="2">7 8</point>
+    <point>44, 45</point>
+    <point index="0">55</point>
+    <point index="5">9</point>
+  The application could also interpret this as a series of points:
+    (*, *, *, *, *, *)
+    (5, 6, *)
+    (*, *, 7, 8, *)
+    (44, 45, *)
+    (55, *)
+    (*, *, *, *, *, 9)
+  
+  The application usually fills in unspecified coords with zeros.
+  
+  <xxx>
+    <point></point>
+    <point>-12 14</point>
+    <point index="2">-17</point>
+  </xxx>
+-->
+<xs:complexType name="pointType">
+  <xs:sequence>
+    <xs:element name="point" type="indexAttrIndexListType" minOccurs="0" maxOccurs="unbounded" />
+  </xs:sequence>
+</xs:complexType>
+
+<!--
+  extentType
+  
+  Extents are positive integers.
+  They are a lot like points except negatives are not allowed.
+  Zero is also not allowed.
+  
+  <xxx>
+    <extent></extent>
+    <extent>10 20</extent>
+    <extent index="2">30</extent>
+  </xxx>
+-->
+<xs:complexType name="extentType">
+  <xs:sequence>
+    <xs:element name="extent" type="indexAttrPosSizeListType" minOccurs="0" maxOccurs="unbounded" />
+  </xs:sequence>
+</xs:complexType>
+
+<!-- ===============================================================================
+  indexAttrIndexListType
+  
+  For types with an "index" attribute that hold a list of integers.
+  Negative integers are allowed.
+  The index value must be a non-negative integer (zero allowed).
+  
+  <xxx index="1">-22</xxx>
+  <xxx>22 -33</xxx>
+-->
+<xs:complexType name="indexAttrIndexListType">
+  <xs:simpleContent>
+    <xs:extension base="indexListType">
+      <xs:attribute name="index" type="nonegIndexListType" />
+    </xs:extension>
+  </xs:simpleContent>
+</xs:complexType>
+
+<!--
+  indexAttrPosSizeListType
+  
+  For types with the "index" attribute that hold a list of positive (not zero, not negative) integers.
+  The index value must be a non-negative integer (zero allowed).
+  
+  <xxx index=1>100</xxx>
+  <xxx>50 100</xxx>
+-->
+<xs:complexType name="indexAttrPosSizeListType">
+  <xs:simpleContent>
+    <xs:extension base="posSizeListType">
+      <xs:attribute name="index" type="nonegIndexListType" />
+    </xs:extension>
+  </xs:simpleContent>
+</xs:complexType>
+
+<!-- =======================================================================
+  valueType      - a double (real number)
+  valueListType  - a list of doubles
+  
+  Simple types. Real (double) values.
+-->
+<xs:simpleType name="valueType">
+  <xs:restriction base="xs:double" />
+</xs:simpleType>
+<xs:simpleType name="valueListType">
+  <xs:list itemType="valueType" />
+</xs:simpleType>
+
+<!-- ========================================================================
+  Index values
+  
+  indexType           - negatives allowed, the usual case
+  indexListType
+  
+  nonegIndexType      - zero ok but no negatives
+  nonegIndexListType
+
+  posIndexType        - zero not allowed
+  posIndexListType
+-->
+<xs:simpleType name="indexType">
+  <xs:restriction base="xs:integer" />
+</xs:simpleType>
+<xs:simpleType name="indexListType">
+  <xs:list itemType="indexType" />
+</xs:simpleType>
+<xs:simpleType name="nonegIndexType">
+  <xs:restriction base="xs:nonNegativeInteger" />
+</xs:simpleType>
+<xs:simpleType name="nonegIndexListType">
+  <xs:list itemType="nonegIndexType" />
+</xs:simpleType>
+<xs:simpleType name="posIndexType">
+  <xs:restriction base="xs:positiveInteger" />
+</xs:simpleType>
+<xs:simpleType name="posIndexListType">
+  <xs:list itemType="posIndexType" />
+</xs:simpleType>
+
+<!-- ========================================================================
+  Size values
+  
+  sizeType            - non-negative, should be zero or positive
+  sizeListType
+
+  posSizeType         - zero not allowed
+  posSizeListType
+
+  signedSizeType      - negative allowed
+  signedSizeListType
+-->
+<xs:simpleType name="sizeType">
+  <xs:restriction base="xs:nonNegativeInteger" />
+</xs:simpleType>
+<xs:simpleType name="sizeListType">
+  <xs:list itemType="sizeType" />
+</xs:simpleType>
+<xs:simpleType name="posSizeType">
+  <xs:restriction base="xs:positiveInteger" />
+</xs:simpleType>
+<xs:simpleType name="posSizeListType">
+  <xs:list itemType="posSizeType" />
+</xs:simpleType>
+<xs:simpleType name="signedSizeType">
+  <xs:restriction base="xs:integer" />
+</xs:simpleType>
+<xs:simpleType name="signedSizeListType">
+  <xs:list itemType="signedSizeType" />
+</xs:simpleType>
+
+<!-- end of XSD schema definition -->
+</xs:schema>
