@@ -1,10 +1,36 @@
 // |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 // holder.cpp
-//   Neal Binnendyk, nealabq -at- gmail, nealabq.com
-//   Copyright (c) 2010. All rights reserved.
+//
+//   Copyright (c) Neal Binnendyk 2009, 2010. <nealabq@gmail.com> nealabq.com
+//
+//   |=== GPL License Notice ====================================================================|
+//   | This code is free software: you can redistribute it and/or modify it under the terms      |
+//   | of the GNU General Public License as published by the Free Software Foundation, either    |
+//   | version 3 of the License, or (at your option) any later version.                          |
+//   |                                                                                           |
+//   | This code is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;    |
+//   | without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. |
+//   | See the GNU General Public License for more details: <http://www.gnu.org/licenses/>       |
+//   |=== END License Notice ====================================================================|
+//
 // _______________________________________________________________________________________________
 // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+// This implements holder_base_type.
+// Subtypes of holder_base_type are holder types. Instances are called "holders".
+//
+// A holder is a heat-wave object that wraps around (and abstracts) one-or-more UI widgets from Qt.
+// For example, an angle-holder attaches to and controls a slider. The angle-holder hides the details
+// of the slider, and let's you ask for the angle in degrees, arcseconds, etc.
+// If the slider changes, the attached angle-holder emits signals and also changes.
+// If you change the angle in the holder (with a function call), the holder will move the slider and
+// also emit signals.
+//
+// In an MVVC scheme, the holder objects abstract the model/control of the UI.
+//
+// The animation engine changes the values in the holders. This animates the appropriate widgets,
+// and notifies the main view that it needs to re-draw the scene.
+//
 // Holder redesign:
 //   Holders should attach in a directed graph.
 //   Like a directed graph, holders have targets. They also have sources although they may not

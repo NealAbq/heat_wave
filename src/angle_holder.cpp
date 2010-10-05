@@ -1,8 +1,19 @@
 // |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 // angle_holder.cpp
-//   Neal Binnendyk, nealabq -at- gmail, nealabq.com
-//   Copyright (c) 2010. All rights reserved.
+//
+//   Copyright (c) Neal Binnendyk 2009, 2010. <nealabq@gmail.com> nealabq.com
+//
+//   |=== GPL License Notice ====================================================================|
+//   | This code is free software: you can redistribute it and/or modify it under the terms      |
+//   | of the GNU General Public License as published by the Free Software Foundation, either    |
+//   | version 3 of the License, or (at your option) any later version.                          |
+//   |                                                                                           |
+//   | This code is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;    |
+//   | without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. |
+//   | See the GNU General Public License for more details: <http://www.gnu.org/licenses/>       |
+//   |=== END License Notice ====================================================================|
+//
 // _______________________________________________________________________________________________
 // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 // _______________________________________________________________________________________________
@@ -150,6 +161,8 @@ degrees_to_arcseconds( int i_degrees)
   int
   angle_holder::
 get_arc_angle__arcseconds( ) const
+  //
+  // The arc-angle is the angle between the min-angle and max-angle.
 {
     int const width_arcsec = get_max_angle__arcseconds( ) - get_min_angle__arcseconds( );
     d_assert( (0 < width_arcsec) && (width_arcsec <= degrees_to_arcseconds( 360)));

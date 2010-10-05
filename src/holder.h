@@ -1,8 +1,18 @@
 // |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 // holder.h
-//   Neal Binnendyk, nealabq -at- gmail, nealabq.com
-//   Copyright (c) 2010. All rights reserved.
+//
+//   Copyright (c) Neal Binnendyk 2009, 2010. <nealabq@gmail.com> nealabq.com
+//
+//   |=== GPL License Notice ====================================================================|
+//   | This code is free software: you can redistribute it and/or modify it under the terms      |
+//   | of the GNU General Public License as published by the Free Software Foundation, either    |
+//   | version 3 of the License, or (at your option) any later version.                          |
+//   |                                                                                           |
+//   | This code is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;    |
+//   | without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. |
+//   | See the GNU General Public License for more details: <http://www.gnu.org/licenses/>       |
+//   |=== END License Notice ====================================================================|
 //
 # pragma once
 # ifndef HOLDER_H
@@ -19,6 +29,9 @@
   class
 holder_base_type
   : public QObject
+  //
+  // Holders coordinate between Qt widgets, the animation engine, the scene manager, and any other
+  // part of the program that wants to know certain control values from the UI.
   //
   // Subtypes provide:
   //   typedef value_type

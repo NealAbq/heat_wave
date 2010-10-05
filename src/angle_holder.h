@@ -1,8 +1,18 @@
 // |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 // angle_holder.h
-//   Neal Binnendyk, nealabq -at- gmail, nealabq.com
-//   Copyright (c) 2010. All rights reserved.
+//
+//   Copyright (c) Neal Binnendyk 2009, 2010. <nealabq@gmail.com> nealabq.com
+//
+//   |=== GPL License Notice ====================================================================|
+//   | This code is free software: you can redistribute it and/or modify it under the terms      |
+//   | of the GNU General Public License as published by the Free Software Foundation, either    |
+//   | version 3 of the License, or (at your option) any later version.                          |
+//   |                                                                                           |
+//   | This code is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;    |
+//   | without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. |
+//   | See the GNU General Public License for more details: <http://www.gnu.org/licenses/>       |
+//   |=== END License Notice ====================================================================|
 //
 # pragma once
 # ifndef ANGLE_HOLDER_H
@@ -72,13 +82,15 @@ angle_holder
     /* ctor */     angle_holder
                     (  QObject *  p_parent
                      , double     init_degrees
-                     , double     min_degrees
+                     , double     min_degrees        // the min/max are usually 0/360 or -180/180 or -90/90
                      , double     max_degrees
                     )                                         ;
 
   public:
     bool           is_full_circle( )                    const ;
 
+                   // The arc-angle is the angle between the min and max angle. It does not change with the value.
+                   // 0 < arc-angle <= (360 * 60 * 60) (arcseconds)
     int            get_arc_angle__arcseconds( )         const ;
     double         get_arc_angle__degrees( )            const { return arcseconds_to_degrees( get_arc_angle__arcseconds( )); }
 
