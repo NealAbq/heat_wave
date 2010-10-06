@@ -16,6 +16,27 @@
 //
 // _______________________________________________________________________________________________
 // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+// This defines two kinds of objects. Both are holders.
+//   Animate: Pronounced as in "inanimate object". This is the object that drives all the
+//     animations, like a timeline. There is only one object of animate_type.
+//
+//     The animate object is a holder because it attaches to the start button and the single-step
+//     button. It doesn't ever drive those buttons (automatically push them) and does not keep
+//     pointers to them because the animate object is itself never animated. This is a weakness,
+//     and will be corrected if we ever add scripting hooks or replay or script-driven testing.
+//
+//     The animate object should also probably attach to the "requested frames per second" control(s),
+//     and it should drive the "actual frames per second" UI, but it doesn't right now.
+//
+//     The animate object should probably also attach to the list-box that lists all the animators.
+//     But it doesn't for now.
+//
+//   Animator: There is one animator for each UI holder that is animated (almost all of them).
+//     All of the animators are kept by the animate object, which knows which ones are turned
+//     on and which are off.
+//     Each animator pushes animation moves out to a holder. And each animator is also a holder
+//     in its own right, attached to the UI that controls each little piece of animation.
+//
 // UI:
 //   Optional
 //     Show start/start duration for animation. As either msecs or fps.
@@ -471,6 +492,8 @@ single_step( )
   void
   animate_type::
 attach__on_off_button( QAbstractButton * p_button)
+  //
+  //
 {
     d_assert( p_button && p_button->isCheckable( ));
 

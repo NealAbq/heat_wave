@@ -2,7 +2,9 @@
 // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 // holder.h
 //
-//   Copyright (c) Neal Binnendyk 2009, 2010. <nealabq@gmail.com> nealabq.com
+//   Copyright (c) Neal Binnendyk 2009, 2010.
+//     <nealabq@gmail.com>
+//     <http://nealabq.com/>
 //
 //   |=== GPL License Notice ====================================================================|
 //   | This code is free software: you can redistribute it and/or modify it under the terms      |

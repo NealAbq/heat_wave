@@ -2,6 +2,18 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
 <!-- ===============================================================================================
+  Copyright (c) Neal Binnendyk 2009, 2010. [nealabq@gmail.com] nealabq.com
+
+  |=== GPL License Notice ====================================================================|
+  | This code is free software: you can redistribute it and/or modify it under the terms      |
+  | of the GNU General Public License as published by the Free Software Foundation, either    |
+  | version 3 of the License, or (at your option) any later version.                          |
+  |                                                                                           |
+  | This code is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;    |
+  | without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. |
+  | See the GNU General Public License for more details: [http://www.gnu.org/licenses/]       |
+  |=== END License Notice ====================================================================|
+
   This schema describes an XML format for expressing a multi-dimensional array of numerical values.
   The values are floating-point (double) numbers.
   The array can be 1D (vector), 2D (matrix), 3D, 4D, etc. There is no limit on the dimensionality.
